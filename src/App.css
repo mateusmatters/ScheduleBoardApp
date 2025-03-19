@@ -52,6 +52,9 @@ input[type="time"] {
 .red{
   background-color: rgb(198, 58, 58);
 }
+.dark-red{
+  background-color: rgb(121, 32, 32);
+}
 
 .blue{
   background-color: rgb(152, 184, 215);

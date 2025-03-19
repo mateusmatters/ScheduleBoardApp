@@ -2,7 +2,7 @@ import './App.css';
 import {Employee} from "./class definitions/employee"
 import {SortedArray} from "./class definitions/sorted-array"
 import { useState, useEffect, useContext} from 'react';
-import {widthPercentage, createTimeStamp, parseTimeString, percentageOfSeconds, simplifiedTimeStampString, chooseRightBackgroundColor, chooseRightProgressBarColor} from './class definitions/helperFunctions';
+import {createTimeStamp, parseTimeString, simplifiedTimeStampString, chooseRightColor} from './class definitions/helperFunctions';
 
 
 
@@ -22,26 +22,24 @@ function App() {
   function handleEmployeeSubmit(firstName, lastName, segStart, segEnd){
     let [hours, mins] = parseTimeString(segStart);
     let [hours2, mins2] = parseTimeString(segEnd);
-
     const empx = new Employee(firstName, lastName, createTimeStamp(hours,mins), createTimeStamp(hours2,mins2), 5, "Developer");
     const updatedEmployees = new SortedArray(Employee);
     updatedEmployees.array = [...employees.array];
     updatedEmployees.add(empx);
     setEmployees(updatedEmployees);
-    console.log("you submitted an employee at the time of : ", time.toLocaleTimeString())
   }
 
   function modifyBreak(employee, timeStamp, START_OR_END_TIME, typeOfBreak){
     employee[typeOfBreak][START_OR_END_TIME]= timeStamp
     const updatedEmployees = new SortedArray(Employee);
-    updatedEmployees.array = employees.array;// O(1) operation
+    updatedEmployees.array = employees.array;
     setEmployees(updatedEmployees);
   }
 
   function modifyClockedInStatus(employee){
     employee.isClockedIn= !employee.isClockedIn;
     const updatedEmployees = new SortedArray(Employee);
-    updatedEmployees.array = employees.array;// O(1) operation
+    updatedEmployees.array = employees.array;
     setEmployees(updatedEmployees);
   }
 
@@ -58,6 +56,8 @@ function App() {
   function inputTimes(employee, index, typeOfBreak){
     let lValue = <input onBlur={(e) => onBlurFunction(e,index, START_TIME, typeOfBreak)}className= "timeInputsInGridLeft centered-time-content" type= "time" id= {index + typeOfBreak + "Start"}/>;
     let rValue = <input onBlur={(e) => onBlurFunction(e,index, END_TIME, typeOfBreak)}className= "timeInputsInGridRight centered-time-content" type= "time" id= {index + typeOfBreak + "End"}/>;
+    let breakColors = chooseRightColor(employee, typeOfBreak, time);
+
     if(employee[typeOfBreak][START_TIME] !== null){
       lValue = <div className="centered-time-content">{simplifiedTimeStampString(employee[typeOfBreak + "StartTime"])}</div>
     }
@@ -66,14 +66,7 @@ function App() {
     }
     return (
       <>
-        {/*If the employee is clocked in, we want to show the progress of their breaks*/}
-
-        {chooseRightProgressBarColor(employee, typeOfBreak, time) !== "none" ?(
-          <div className={"progress-bar " + chooseRightProgressBarColor(employee, typeOfBreak, time)} style={{ width: `${widthPercentage(employee, time)}%` }}></div>
-          ):(
-          <></>
-          )
-        }
+        {breakColors[1] !== "none" ?(<div className={"progress-bar " + breakColors[1]} style={{ width: `${breakColors[2]}%` }}></div>):(<></>)}
 
         {lValue}
         <div className="centered-time-content">-</div>
@@ -83,23 +76,23 @@ function App() {
   }
 
   function employeeToHTML(employee, index){
-    let tempp = chooseRightBackgroundColor(employee, "break1");
+    let tempp = chooseRightColor(employee, "break1", time)[0];
     let classThing = `grid-element break1 progress-bar-background ${tempp}`
     let break1Style = <div className= {classThing}>{inputTimes(employee, index, "break1")}</div>
 
-    tempp = chooseRightBackgroundColor(employee, "lunch");
+    tempp = chooseRightColor(employee, "lunch", time)[0];
     classThing = `grid-element lunch progress-bar-background ${tempp}`
     const lunchStyle = employee.hoursDaySeg > 6
     ? <div className={classThing}>{inputTimes(employee, index, "lunch")}</div>
     : <div className="grid-element lunch grey">XXX</div>;
 
-
-
-    tempp = chooseRightBackgroundColor(employee, "break2");
+    tempp = chooseRightColor(employee, "break2", time)[0];
     classThing = `grid-element break2 progress-bar-background ${tempp}`
     const break2Style = employee.hoursDaySeg > 6 || employee.hoursDaySeg === 6
     ? <div className={classThing} >{inputTimes(employee, index, "break2")}</div>
     : <div className="grid-element break2 grey">XXX</div>;
+
+
 
     return (
       <div className ="row-elt" id={index}>

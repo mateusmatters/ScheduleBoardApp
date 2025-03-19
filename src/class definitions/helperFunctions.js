@@ -1,129 +1,3 @@
-// const START_TIME = 0;
-// const END_TIME = 1;
-
-// export class Employee {
-//     constructor(firstName, lastName, segmentStart, segmentEnd, role, department ="No Department") {
-//       if (!firstName, !lastName || !segmentStart || !segmentEnd) {
-//         throw new Error("name, segmentStart, and segmentEnd are required fields.");
-//       }
-//       this.firstName = firstName;
-//       this.lastName = lastName;
-//       this.segmentStart = segmentStart;
-//       this.segmentEnd = segmentEnd;
-//       this.break1 = [null, null];
-//       this.lunch = [null, null];
-//       this.break2 = [null, null]
-//       this.hoursDaySeg = getDifferenceTimeStamps(segmentStart, segmentEnd);
-//       this.role = role;
-//       this.department = department;
-//       this.isClockedIn= false;
-//     }
-
-//     get fullName(){
-//         return `${this.lastName}, ${this.firstName}`
-//     }
-
-//     get break1StartTime(){
-//         return this.break1[START_TIME];
-//     }
-//     get break1EndTime(){
-//         return this.break1[END_TIME];
-//     }
-
-//     get break2StartTime(){
-//         return this.break2[START_TIME];
-//     }
-//     get break2EndTime(){
-//         return this.break2[END_TIME];
-//     }
-    
-//     get lunchStartTime(){
-//         return this.lunch[START_TIME];
-//     }
-//     get lunchEndTime(){
-//         return this.lunch[END_TIME];
-//     }
-
-//     get segStartString(){
-//         return simplifiedTimeStampString(this.segmentStart);
-//     }
-
-//     get segEndString(){
-//         return simplifiedTimeStampString(this.segmentEnd);
-//     }
-//     get hoursDaySegString(){
-//         let temp = String(this.hoursDaySeg);
-//         if(temp.length ==1){
-//             return temp + ".00"
-//         } else if(temp.length == 3){
-//             return temp + "0"
-//         } else {
-//             return temp;
-//         }
-//     }
-
-
-//     //compares each employee in a heiarchy of segment start, segment end, last name, first name
-//     compareTo(other) {
-//         return (
-//             compareTimeStamps(this.segmentStart, other.segmentStart) ||
-//             compareTimeStamps(this.segmentEnd, other.segmentEnd) ||
-//             this.lastName.localeCompare(other.lastName) ||
-//             this.firstName.localeCompare(other.firstName)
-//         );
-//     }
-
-//     // Example method to display employee details
-//     toString() {
-//         const breaks = [
-//             { start: this.break1[START_TIME], end: this.break1[END_TIME] },
-//             { start: this.break2[START_TIME], end: this.break2[END_TIME] },
-//             { start: this.lunch[START_TIME], end: this.lunch[END_TIME] }
-//         ];
-        
-//         const [break1StartStr, break1EndStr, break2StartStr, break2EndStr, lunchStartStr, lunchEndStr] = breaks.flatMap(({ start, end }) => [
-//             start !== null ? simplifiedTimeStampString(start) : "DNE",
-//             end !== null ? simplifiedTimeStampString(end) : "DNE"
-//         ]);
-
-//         return `
-//         {
-//             Name: ${this.firstName} ${this.lastName}: ${this.isClockedIn ? "CLOCKED IN": "NOT CLOCKED IN"},
-//             Segment: ${simplifiedTimeStampString(this.segmentStart)} - ${simplifiedTimeStampString(this.segmentEnd)},
-//             Work Hours: ${this.hoursDaySeg},
-//             Role: ${this.role},
-//             Department: ${this.department},
-//             Break1: ${break1StartStr} - ${break1EndStr},
-//             Lunch: ${lunchStartStr} - ${lunchEndStr},
-//             Break2: ${break2StartStr} - ${break2EndStr},
-//         }
-//         `;
-//     }
-//     toStringSimplified() {
-//         return `{Name: ${this.firstName} ${this.lastName}}`;
-//       }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export function createTimeStamp(hours, minutes){
     const time = new Date(); // get today's date
     time.setHours(hours, minutes, 0, 0); // set hours, minutes, seconds, and milliseconds
@@ -196,116 +70,65 @@ export function simplifiedTimeStampString(timeStamp){
     return `${hoursStr}:${minutesStr}`;
 }
 
-export function chooseRightBackgroundColor(employee, typeOfBreak){
+//[backgroundColor, progressBarColor, width percentage] 
+// chooseRightProgressBarColor
+export function chooseRightColor(employee, typeOfBreak, time){
     if(!employee.isClockedIn){
-      return "grey";
-    }
-    if(typeOfBreak === "break1"){
-      if(employee.break1StartTime !== null && employee.break1EndTime !== null){
-        return "light-grey"
-      }
-    }
-    if(typeOfBreak === "lunch"){
-      //make cell light grey if break1 still needs to be entered or start and end time in lunch has already been filled
-      if((employee.lunchStartTime !== null && employee.lunchEndTime !== null) || (employee.break1StartTime === null || employee.break1EndTime === null)){
-        return "light-grey"
-      }
-    }
-    if(typeOfBreak === "break2"){
-      //make cell light grey if time === 6 hours and break1 is null
-      //also make cell light grey if time is over 8 hours and break1 and lunch is null
-      if((employee.hoursDaySeg === 6 && (employee.break1StartTime === null || employee.break1EndTime === null))||
-      employee.break1StartTime === null || employee.break1EndTime === null || employee.lunchStartTime === null || employee.lunchEndTime === null){
-        return "light-grey";
-      }
-  
-    }
-    return "white";
-  }
-  
-//[backgroundColor, progressBarColor]
-export function chooseRightProgressBarColor(employee, typeOfBreak, time){
-    if(!employee.isClockedIn){
-        return "none";
-    }
-    //either the start or end time for break 1 is null, you must show some type of bar
-    if(typeOfBreak === "break1"){
-            let hey = yoyo(employee, time);
-            if(employee.break1StartTime === null){
-                if(hey<0){//show a green bar if you are waiting to be in alloted time for a break
-                    return "green";
-                } else if(hey>0 && hey < 120){//show red bar if you are currently in alloted time for a break
-                    return "red"
-                }
-            } else if(employee.break1EndTime === null){
-                if(hey < 0){//show salmon bar if (start time given and end time not given) and (in alloted time)
-                    return "salmon";
-                } else{//show none if (start time given and end time not given) and (not in alloted time)
-                    return "none";
-                }
+        return ["grey", "none", 0];
+    } else if(typeOfBreak === "break1"){
+        if(employee.break1StartTime === null){
+            let earliestTimeToStartBreak = addTime(employee.segmentStart, 120);
+            let minsBeforeOrAfterEarliestTime = compareTimeStamps(time, earliestTimeToStartBreak);
+
+            if(minsBeforeOrAfterEarliestTime<0){//show a green bar if you are waiting to be in alloted time for a break
+                return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestTime)/120) *100)];
+            } else if(minsBeforeOrAfterEarliestTime>=0 && minsBeforeOrAfterEarliestTime < 120){//show red bar if you are currently in alloted time for a break
+                return ["green","red", Math.round((minsBeforeOrAfterEarliestTime/120) * 100)]
+            } else{
+                console.log("nigga")
+                return ["dark-red", "none", 0]
             }
-            return "none"
-    }
-    if(typeOfBreak === "lunch"){
-        //make cell light grey if break1 still needs to be entered or start and end time in lunch has already been filled
-        if((employee.lunchStartTime !== null && employee.lunchEndTime !== null) || (employee.break1StartTime === null || employee.break1EndTime === null)){
-        return "none"
+        } else if(employee.break1EndTime === null){
+            let timeToEndBreak1 = addTime(employee.break1StartTime, 15);
+            let minsBeforeOrAfterBreak1EndTime = compareTimeStamps(time, timeToEndBreak1);
+            console.log(`mins before or after break are ${minsBeforeOrAfterBreak1EndTime}`)
+            if(minsBeforeOrAfterBreak1EndTime < 0){
+                let barWidth = minsBeforeOrAfterBreak1EndTime >= -15 ? Math.round(((15+minsBeforeOrAfterBreak1EndTime)/15)* 100) : 0
+                return ["white", "salmon", barWidth];
+            } else{
+                return ["dark-red", "none", 0];
+            }
         }
-    }
-    if(typeOfBreak === "break2"){
-        //make cell show no progress bar if time === 6 hours and break1 is null
-        //also make cell show no progress bar if time is over 8 hours and break1 and lunch is null
+    } else if(typeOfBreak === "lunch"){
+        if(employee.break1StartTime === null || employee.break1EndTime === null){
+            return ["light-grey", "none", 0]
+        } else if(employee.lunchStartTime === null){
+            let earliestTimeToStartLunch = addTime(employee.segmentStart, 240);
+            let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
+            if(minsBeforeOrAfterEarliestLunchTime<0){
+                return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
+            } else if(minsBeforeOrAfterEarliestLunchTime>=0 && minsBeforeOrAfterEarliestLunchTime < 120){
+                return ["green","red", Math.round((minsBeforeOrAfterEarliestLunchTime/120) * 100)]
+            } else{
+                return ["dark-red", "none", 0]
+            }
+
+        } else if (employee.lunchEndTime === null){
+            let timeToEndLunch = addTime(employee.break1StartTime, 30);
+            let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
+            if(minsBeforeOrAfterLunchEndTime < 0){
+                let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
+                return ["white", "salmon", a];
+            } else{
+                return ["dark-red", "none", 0];
+            }
+        }
+    } else if(typeOfBreak === "break2"){
         if((employee.hoursDaySeg === 6 && (employee.break1StartTime === null || employee.break1EndTime === null))||
         employee.break1StartTime === null || employee.break1EndTime === null || employee.lunchStartTime === null || employee.lunchEndTime === null){
-        return "none";
+            return ["light-grey", "none", 0]
         }
 
     }
-    return "none";
+    return ["light-grey", "none", 0]
 }
-
-
-function yoyo(employee, currentTime){
-    if(employee.break1StartTime === null){
-        let timeWhereBreakPermissable = addTime(employee.segmentStart, 120);
-        let b = compareTimeStamps(currentTime, timeWhereBreakPermissable);
-        return b;
-    } else if(employee.break1StartTime !== null && employee.break1EndTime === null){
-        let timeLeftInBreak = addTime(employee.break1StartTime, 15);
-        console.log(`time left in the break is :${timeLeftInBreak}`)
-        let b = compareTimeStamps(currentTime, timeLeftInBreak);
-        return b;
-    }
-    return 0;
-}
-
-export function widthPercentage(employee, currentTime){
-    let temp = yoyo(employee, currentTime);
-    console.log(`first thing is ${temp}`);
-    if(employee.break1StartTime=== null){
-        if(temp <0){
-            let a = ((120 + temp)/120) *100;//bc 2 hrs
-            let answer = Math.round(a);
-            console.log(`the answer is ${answer}`);
-            return answer;
-        } else if(temp >=0 && temp <=120){
-            return Math.round((temp/120) * 100);
-        }
-    } else if(employee.break1EndTime=== null){
-        let startTimewithFifteenMinutesAdded = addTime(employee.break1StartTime, 15);
-        let c = compareTimeStamps(currentTime, startTimewithFifteenMinutesAdded);
-        if(c<0){
-            let d = 15+ c;
-            return Math.round((d/15)*100);
-        }
-    }
-    
-    return 0;
-
-}
-
-
-
-// let m = new Employee("MICHELLE", "OBAMA", createTimeStamp(0,0), createTimeStamp(5,0), "Cashier", "FRONT-END");
-// const currTime = new Date();
-// currTime.setHours(1, 59, 0, 0); // Set time to 00:00
