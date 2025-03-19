@@ -79,13 +79,11 @@ export function chooseRightColor(employee, typeOfBreak, time){
         if(employee.break1StartTime === null){
             let earliestTimeToStartBreak = addTime(employee.segmentStart, 120);
             let minsBeforeOrAfterEarliestTime = compareTimeStamps(time, earliestTimeToStartBreak);
-
             if(minsBeforeOrAfterEarliestTime<0){//show a green bar if you are waiting to be in alloted time for a break
                 return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestTime)/120) *100)];
             } else if(minsBeforeOrAfterEarliestTime>=0 && minsBeforeOrAfterEarliestTime < 120){//show red bar if you are currently in alloted time for a break
                 return ["green","red", Math.round((minsBeforeOrAfterEarliestTime/120) * 100)]
             } else{
-                console.log("nigga")
                 return ["dark-red", "none", 0]
             }
         } else if(employee.break1EndTime === null){

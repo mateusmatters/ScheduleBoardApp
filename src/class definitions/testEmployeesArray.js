@@ -19,7 +19,7 @@ const employeeArray = new SortedArray(Employee);
 // employeeArray.add(new Employee("SAAD", "ANDRAOS", createTimeStamp(10,30), createTimeStamp(19,0), "Cashier Asst", "FRONT-END"));
 // employeeArray.add(new Employee("MARGARET", "NTIM", createTimeStamp(10,45), createTimeStamp(15,15), "Cashier", "FRONT-END"));
 // employeeArray.add(new Employee("BARACK", "OBAMA", createTimeStamp(13,45), createTimeStamp(18,45), "Cashier", "FRONT-END"));
-employeeArray.add(new Employee("MICHELLE", "OBAMA", createTimeStamp(3,0), createTimeStamp(9,0), "Cashier", "FRONT-END"));
+employeeArray.add(new Employee("MICHELLE", "OBAMA", createTimeStamp(3,0), createTimeStamp(11,0), "Cashier", "FRONT-END"));
 
 
 export default employeeArray;

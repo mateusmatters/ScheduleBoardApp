@@ -54,46 +54,32 @@ function App() {
 
 
   function inputTimes(employee, index, typeOfBreak){
-    let lValue = <input onBlur={(e) => onBlurFunction(e,index, START_TIME, typeOfBreak)}className= "timeInputsInGridLeft centered-time-content" type= "time" id= {index + typeOfBreak + "Start"}/>;
-    let rValue = <input onBlur={(e) => onBlurFunction(e,index, END_TIME, typeOfBreak)}className= "timeInputsInGridRight centered-time-content" type= "time" id= {index + typeOfBreak + "End"}/>;
+    if((typeOfBreak === "lunch" && employee.hoursDaySeg<=6) || (typeOfBreak === "break2" && employee.hoursDaySeg<6)){
+      return (<div className ={`grid-element progress-bar-background ${typeOfBreak} grey`}>XXX</div>)
+    }
+
     let breakColors = chooseRightColor(employee, typeOfBreak, time);
+    let classThing = `grid-element progress-bar-background ${typeOfBreak} ${breakColors[0]}`;
 
-    if(employee[typeOfBreak][START_TIME] !== null){
-      lValue = <div className="centered-time-content">{simplifiedTimeStampString(employee[typeOfBreak + "StartTime"])}</div>
-    }
-    if(employee[typeOfBreak][END_TIME] !== null){
-      rValue = <div className="centered-time-content">{simplifiedTimeStampString(employee[typeOfBreak + "EndTime"])}</div>
-    }
+    const lValue = employee[typeOfBreak][START_TIME] === null
+    ? <input onBlur={(e) => onBlurFunction(e,index, START_TIME, typeOfBreak)}className= "timeInputsInGridLeft centered-time-content" type= "time" id= {index + typeOfBreak + "Start"}/>
+    : <div className="centered-time-content">{simplifiedTimeStampString(employee[typeOfBreak + "StartTime"])}</div>
+    
+    const rValue = employee[typeOfBreak][END_TIME] === null
+    ? <input onBlur={(e) => onBlurFunction(e,index, END_TIME, typeOfBreak)}className= "timeInputsInGridRight centered-time-content" type= "time" id= {index + typeOfBreak + "End"}/>
+    : <div className="centered-time-content">{simplifiedTimeStampString(employee[typeOfBreak + "EndTime"])}</div>
+    
     return (
-      <>
+      <div className ={classThing}>
         {breakColors[1] !== "none" ?(<div className={"progress-bar " + breakColors[1]} style={{ width: `${breakColors[2]}%` }}></div>):(<></>)}
-
         {lValue}
         <div className="centered-time-content">-</div>
         {rValue}
-      </>
+      </div>
     )
   }
 
   function employeeToHTML(employee, index){
-    let tempp = chooseRightColor(employee, "break1", time)[0];
-    let classThing = `grid-element break1 progress-bar-background ${tempp}`
-    let break1Style = <div className= {classThing}>{inputTimes(employee, index, "break1")}</div>
-
-    tempp = chooseRightColor(employee, "lunch", time)[0];
-    classThing = `grid-element lunch progress-bar-background ${tempp}`
-    const lunchStyle = employee.hoursDaySeg > 6
-    ? <div className={classThing}>{inputTimes(employee, index, "lunch")}</div>
-    : <div className="grid-element lunch grey">XXX</div>;
-
-    tempp = chooseRightColor(employee, "break2", time)[0];
-    classThing = `grid-element break2 progress-bar-background ${tempp}`
-    const break2Style = employee.hoursDaySeg > 6 || employee.hoursDaySeg === 6
-    ? <div className={classThing} >{inputTimes(employee, index, "break2")}</div>
-    : <div className="grid-element break2 grey">XXX</div>;
-
-
-
     return (
       <div className ="row-elt" id={index}>
         <div className= "grid-element tm">/ <button onClick={() => console.log(employees.array[Number(index)].toString())}>DETAILS</button></div>
@@ -107,9 +93,9 @@ function App() {
         </div>
         <div className= "grid-element hrsDaySeg">{employee.hoursDaySegString} / {employee.hoursDaySegString}</div>
         <div className= "grid-element segStart">{employee.segStartString}</div>
-        {break1Style}
-        {lunchStyle}
-        {break2Style}
+        {inputTimes(employee, index, "break1")}
+        {inputTimes(employee, index, "lunch")}
+        {inputTimes(employee, index, "break2")}
         <div className= "grid-element segEnd">{employee.segEndString}</div>
         <div className= "grid-element waiver">M1</div>
         <div className= "grid-element duties"></div>
