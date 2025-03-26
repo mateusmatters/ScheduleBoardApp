@@ -72,12 +72,12 @@ export function simplifiedTimeStampString(timeStamp){
 
 //[backgroundColor, progressBarColor, width percentage] 
 // chooseRightProgressBarColor
-export function chooseRightColor(employee, typeOfBreak, time){
-    if(!employee.isClockedIn){
+export function chooseRightColor(emp, typeOfBreak, time){
+    if(!emp.isClockedIn){
         return ["grey", "none", 0];
     } else if(typeOfBreak === "break1"){
-        if(employee.break1StartTime === null){
-            let earliestTimeToStartBreak = addTime(employee.segmentStart, 120);
+        if(emp.break1StartTime === null){
+            let earliestTimeToStartBreak = addTime(emp.segmentStart, 120);
             let minsBeforeOrAfterEarliestTime = compareTimeStamps(time, earliestTimeToStartBreak);
             if(minsBeforeOrAfterEarliestTime<0){//show a green bar if you are waiting to be in alloted time for a break
                 return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestTime)/120) *100)];
@@ -86,10 +86,9 @@ export function chooseRightColor(employee, typeOfBreak, time){
             } else{
                 return ["dark-red", "none", 0]
             }
-        } else if(employee.break1EndTime === null){
-            let timeToEndBreak1 = addTime(employee.break1StartTime, 15);
+        } else if(emp.break1EndTime === null){
+            let timeToEndBreak1 = addTime(emp.break1StartTime, 15);
             let minsBeforeOrAfterBreak1EndTime = compareTimeStamps(time, timeToEndBreak1);
-            console.log(`mins before or after break are ${minsBeforeOrAfterBreak1EndTime}`)
             if(minsBeforeOrAfterBreak1EndTime < 0){
                 let barWidth = minsBeforeOrAfterBreak1EndTime >= -15 ? Math.round(((15+minsBeforeOrAfterBreak1EndTime)/15)* 100) : 0
                 return ["white", "salmon", barWidth];
@@ -98,10 +97,10 @@ export function chooseRightColor(employee, typeOfBreak, time){
             }
         }
     } else if(typeOfBreak === "lunch"){
-        if(employee.break1StartTime === null || employee.break1EndTime === null){
+        if(emp.break1StartTime === null || emp.break1EndTime === null){
             return ["light-grey", "none", 0]
-        } else if(employee.lunchStartTime === null){
-            let earliestTimeToStartLunch = addTime(employee.segmentStart, 240);
+        } else if(emp.lunchStartTime === null){
+            let earliestTimeToStartLunch = addTime(emp.segmentStart, 240);
             let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
             if(minsBeforeOrAfterEarliestLunchTime<0){
                 return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
@@ -111,8 +110,8 @@ export function chooseRightColor(employee, typeOfBreak, time){
                 return ["dark-red", "none", 0]
             }
 
-        } else if (employee.lunchEndTime === null){
-            let timeToEndLunch = addTime(employee.break1StartTime, 30);
+        } else if (emp.lunchEndTime === null){
+            let timeToEndLunch = addTime(emp.break1StartTime, 30);
             let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
             if(minsBeforeOrAfterLunchEndTime < 0){
                 let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
@@ -122,11 +121,35 @@ export function chooseRightColor(employee, typeOfBreak, time){
             }
         }
     } else if(typeOfBreak === "break2"){
-        if((employee.hoursDaySeg === 6 && (employee.break1StartTime === null || employee.break1EndTime === null))||
-        employee.break1StartTime === null || employee.break1EndTime === null || employee.lunchStartTime === null || employee.lunchEndTime === null){
+        //need to show progress bar in 2 diff cases
+        //1 if break1 start and end time finish and emp.hoursDaySeg === 6
+        //2 if lunch1 start and end time finish and emp.hoursDaySeg > 6
+        //otherwise should be grayed out and wait for one of these 2 prior breaks to finish
+        if((emp.hoursDaySeg === 6 && (emp.break1StartTime === null || emp.break1EndTime === null))){
             return ["light-grey", "none", 0]
         }
+        if(emp.break2StartTime === null){
+            let lastBreakEndTime = emp.hoursDaySeg === 6 ? emp.break1EndTime : emp.lunchEndTime;
+            let latestTimeToStartBreak2 = addTime(emp.segmentEnd, -15);
+            let timeInBetween = Math.abs(compareTimeStamps(lastBreakEndTime, latestTimeToStartBreak2));
 
+            let minsBeforeOrAfterLatestTimeToStartBreak2 = compareTimeStamps(time, latestTimeToStartBreak2);
+            if(minsBeforeOrAfterLatestTimeToStartBreak2<0){
+                return ["green", "red", Math.round(((timeInBetween + minsBeforeOrAfterLatestTimeToStartBreak2)/timeInBetween) *100)];
+            } else{
+                return ["dark-red", "none", 0]
+            }
+        } else if (emp.break2EndTime === null){
+            let timeToEndLunch = addTime(emp.break1StartTime, 30);
+            let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
+            if(minsBeforeOrAfterLunchEndTime < 0){
+                let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
+                return ["white", "salmon", a];
+            } else{
+                return ["dark-red", "none", 0];
+            }
+        }
+        
     }
     return ["light-grey", "none", 0]
 }

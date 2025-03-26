@@ -11,12 +11,31 @@ const TimeContext = createContext();
 export const TimeProvider = ({ children }) => {
   //this state of time and setTime is what we would eventually like for lots of children to use
   //we define them here and also make an useEffect to update and handle all that work of updating time here
-  const [time, setTime] = useState(new Date());
+  //const [time, setTime] = useState(new Date());
+  
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setTime(new Date());
+  //   }, 60000);
+
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  //TEST VERSION
+  const [time, setTime] = useState(()=>{
+    const date = new Date();
+    date.setHours(8,30,0,0);
+    return date;
+  })
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(new Date());
-    }, 60000);
+      setTime((prevTime) =>{
+        const newTime = new Date(prevTime);
+        newTime.setMinutes(newTime.getMinutes()+1);
+        return newTime;
+      })
+    }, 500);
 
     return () => clearInterval(interval);
   }, []);
