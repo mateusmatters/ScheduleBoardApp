@@ -53,11 +53,9 @@ export class SortedArray {
     }
 
     getSpecificDepartment(departmentName){
-      if (!departmentName) return this._array;
+      if (!departmentName || departmentName=== "ALL") return this._array;
       let retValue = this._array.filter(employee => employee.department === departmentName);
-      console.log("the ret value size is: ", retValue.length);
       return retValue;
-
     }
 
     toString() {

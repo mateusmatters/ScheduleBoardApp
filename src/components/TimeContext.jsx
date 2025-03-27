@@ -35,7 +35,7 @@ export const TimeProvider = ({ children }) => {
         newTime.setMinutes(newTime.getMinutes()+1);
         return newTime;
       })
-    }, 500);
+    }, 1500);
 
     return () => clearInterval(interval);
   }, []);

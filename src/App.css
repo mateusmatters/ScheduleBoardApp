@@ -146,7 +146,7 @@ input[type="time"] {
   background-color: rgb(228, 198, 142);
   border: 2px solid #111;
   max-width:200px;
-  flex-grow: 1; /* Distributes available space evenly */
+  flex-rgow: 1; /* Distributes available space evenly */
   text-align: center;
   padding: 10px;
 }
@@ -154,4 +154,7 @@ input[type="time"] {
 .department-element:hover {
   background-color: rgb(233, 211, 172);
 }
-.department:
+
+.department-element.abc {
+  background-color: rgb(190, 54, 118);
+}
