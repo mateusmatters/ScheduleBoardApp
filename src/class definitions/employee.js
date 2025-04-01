@@ -1,4 +1,5 @@
-import { compareTimeStamps, getDifferenceTimeStamps, simplifiedTimeStampString} from "./helperFunctions";
+import { compareTimeStamps, getDifferenceTimeStamps, simplifiedTimeStampString} from "./helperFunctions.js";
+
 const START_TIME = 0;
 const END_TIME = 1;
 
@@ -14,6 +15,9 @@ const END_TIME = 1;
 // segEnd DATE
 // waiver STRING
 // duties STRING
+
+
+
 export class Employee {
     constructor(firstName, lastName, segmentStart, segmentEnd, role, department ="No Department") {
       if (!firstName, !lastName || !segmentStart || !segmentEnd) {

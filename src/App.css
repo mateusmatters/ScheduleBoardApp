@@ -126,7 +126,7 @@ input[type="time"] {
 .department-nav-bar {
   display: flex;
   justify-content: space-between; /* Ensures even spacing */
-  width: 100vw; /* Takes full screen width */
+  width: 50vw; /* Takes full screen width */
   list-style: none;
   font-size: 18px;
   padding: 0;
@@ -146,7 +146,7 @@ input[type="time"] {
   background-color: rgb(228, 198, 142);
   border: 2px solid #111;
   max-width:200px;
-  flex-rgow: 1; /* Distributes available space evenly */
+  flex-grow: 1; /* Distributes available space evenly */
   text-align: center;
   padding: 10px;
 }
@@ -157,4 +157,23 @@ input[type="time"] {
 
 .department-element.abc {
   background-color: rgb(190, 54, 118);
+}
+
+/* .highlighted {
+    animation: highlight-effect .8s infinite alternate ease-in-out;
+}
+
+@keyframes highlight-effect {
+    0% { background-color: transparent; }
+    100% { background-color: red; }
+} */
+
+.search-bar{
+  width: 300px;
+  margin-bottom: 30px;
+  border-radius: 25px;
+}
+
+.error-text {
+  color: red;
 }

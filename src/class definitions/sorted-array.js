@@ -1,5 +1,41 @@
-import { queryHelpers } from "@testing-library/dom";
-import {Employee} from "./employee.js";
+import { Employee} from "./employee.js";
+
+
+function areNamesSimilar(partialOrWholeName, wholeName){
+  if (typeof partialOrWholeName !== 'string' || typeof wholeName !== 'string') {
+    throw new Error("Both inputs must be strings");
+  }
+  // Create a regex pattern that checks if partialOrWholeName matches from the start of wholeName
+  let regex = new RegExp(`^${partialOrWholeName}`, "i"); // ^ ensures it matches from the beginning
+  return regex.test(wholeName);
+}
+
+export function findSimilarNameInList(inputName, employeeList){
+  if (!/^[A-Za-z'-]+ ?(?: [A-Za-z'-]+)?$/.test(inputName)) throw new Error("Invalid format. Expecting only one or two names. Either first, last, or both");
+  if(employeeList.length <1) throw new Error("Need at least one element in Sorted Array");
+
+  let match = inputName.match(/^([A-Za-z'-]+) ?([A-Za-z'-]+)?$/);
+  let name1 = match[1]; // First name (always present)
+  let name2 = match[2] || null; // Second name (optional, defaults to null)
+  let retArray = [];
+  if (name2 === null){
+    for (let employee of employeeList){
+      if(areNamesSimilar(name1, employee.firstName) || areNamesSimilar(name1, employee.lastName)){
+        retArray.push(employee);
+      }
+    }
+  } else{
+    for(let employee of employeeList){
+      if(areNamesSimilar(name1, employee.firstName) && areNamesSimilar(name2, employee.lastName)){
+        retArray.push(employee);
+      } else if(areNamesSimilar(name1, employee.lastName) && areNamesSimilar(name2, employee.firstName)){
+        retArray.push(employee);
+      }
+    }
+  }
+  return retArray;
+}
+
 
 export class SortedArray {
     constructor(elementType) {
@@ -10,29 +46,22 @@ export class SortedArray {
       this._array = [];
     }
 
-    get array(){
-      return this._array;
-    }
+    get array(){return this._array}
+    get size(){return this._array.length}
+    get elementType() {return this._elementType}
+
     set array(otherArray){
       //put some code later that checks for the type of the parameter
       this._array = otherArray;
     }
 
-    get size(){
-      return this._array.length;
-    }
-
-    get elementType() {
-      return this._elementType
-    }
-  
+    
     add(element){
       if(!(element instanceof this._elementType)){
         throw new TypeError(`Element must be of type ${this._elementType}`)
       }
       let left = 0;
       let right = this._array.length;
-
       // Use binary search to find the correct insertion index.
       while (left < right) {
         const mid = Math.floor((left + right) / 2);
@@ -48,23 +77,43 @@ export class SortedArray {
       return this._arrary;
     }
 
-    deleteElement(){
 
-    }
-
+    //employee specific function
     getSpecificDepartment(departmentName){
       if (!departmentName || departmentName=== "ALL") return this._array;
       let retValue = this._array.filter(employee => employee.department === departmentName);
       return retValue;
     }
 
+    //employee specific function
+    // findSimilarNameInList(inputName){
+    //   if (!/^[A-Za-z'-]+ ?(?: [A-Za-z'-]+)?$/.test(inputName)) throw new Error("Invalid format. Expecting only one or two names. Either first, last, or both");
+    //   if(this.size <1) throw new Error("Need at least one element in Sorted Array");
+
+    //   let match = inputName.match(/^([A-Za-z'-]+) ?([A-Za-z'-]+)?$/);
+    //   let name1 = match[1]; // First name (always present)
+    //   let name2 = match[2] || null; // Second name (optional, defaults to null)
+    //   let retArray = [];
+    //   // console.log(`name1: ${name1}, name2: ${name2}`);
+    //   if (name2 === null){
+    //     for (let employee of this._array){
+    //       let hey = false;
+    //       if(areNamesSimilar(name1, employee.firstName) || areNamesSimilar(name1, employee.lastName)){
+    //         retArray.push(employee);
+    //         hey = true;
+    //       }
+    //       console.log(`Are ${name1} and ${employee.firstName} similar? Answer is : ${hey}`);
+    //     }
+    //   }
+    //   return retArray;
+    // }
+
     toString() {
       let retString ="{";
       for (let element of this._array){
-        retString = retString + element.toString()+", "
+        retString = retString + element.toStringSimplified()+", "
       }
       if( retString.length == 1) return "{}";
       return retString.slice(0, retString.length-2) + "}";
     }  
 }
-

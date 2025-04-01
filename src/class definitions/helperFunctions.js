@@ -73,9 +73,8 @@ export function simplifiedTimeStampString(timeStamp){
 //[backgroundColor, progressBarColor, width percentage] 
 // chooseRightProgressBarColor
 export function chooseRightColor(emp, typeOfBreak, time){
-    if(!emp.isClockedIn){
-        return ["grey", "none", 0];
-    } else if(typeOfBreak === "break1"){
+    if(!emp.isClockedIn) return ["grey", "none", 0];
+    if(typeOfBreak === "break1"){
         if(emp.break1StartTime === null){
             let earliestTimeToStartBreak = addTime(emp.segmentStart, 120);
             let minsBeforeOrAfterEarliestTime = compareTimeStamps(time, earliestTimeToStartBreak);
