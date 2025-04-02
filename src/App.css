@@ -75,8 +75,6 @@ input[type="time"] {
   background-color: salmon;
 }
 
-
-
 .progress-bar{
   position: absolute;
   height:100%;
@@ -176,4 +174,8 @@ input[type="time"] {
 
 .error-text {
   color: red;
+}
+
+.inline{
+  display: inline;
 }

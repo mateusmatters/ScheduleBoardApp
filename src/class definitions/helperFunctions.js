@@ -99,33 +99,32 @@ export function chooseRightColor(emp, typeOfBreak, time){
             }
         }
     } else if(typeOfBreak === "lunch"){
-        // if(emp.break1StartTime === null || emp.break1EndTime === null){
-        //     return ["light-grey", "none", 0]
-        // } else if(emp.lunchStartTime === null){
-        //     let earliestTimeToStartLunch = addTime(emp.segmentStart, 240);
-        //     let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
-        //     if(minsBeforeOrAfterEarliestLunchTime<0){
-        //         return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
-        //     } else if(minsBeforeOrAfterEarliestLunchTime>=0 && minsBeforeOrAfterEarliestLunchTime < 120){
-        //         return ["green","red", Math.round((minsBeforeOrAfterEarliestLunchTime/120) * 100)]
-        //     } else{
-        //         return ["dark-red", "none", 0]
-        //     }
+        if(emp.hoursDaySeg > 6 && (emp.break1StartTime === null || emp.break1EndTime === null)) return ["light-grey", "none", 0]
 
-        // } else if (emp.lunchEndTime === null){
-        //     let timeToEndLunch = addTime(emp.break1StartTime, 30);
-        //     let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
-        //     if(minsBeforeOrAfterLunchEndTime < 0){
-        //         let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
-        //         return ["white", "salmon", a];
-        //     } else{
-        //         return ["dark-red", "none", 0];
-        //     }
-        // }
+        if(emp.lunchStartTime === null){
+            return ["dark-red", "none", 0]
+            // let earliestTimeToStartLunch = addTime(emp.segmentStart, 240);
+            // let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
+            // if(minsBeforeOrAfterEarliestLunchTime<0){
+            //     return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
+            // } else if(minsBeforeOrAfterEarliestLunchTime>=0 && minsBeforeOrAfterEarliestLunchTime < 120){
+            //     return ["green","red", Math.round((minsBeforeOrAfterEarliestLunchTime/120) * 100)]
+            // } else{
+            //     return ["dark-red", "none", 0]
+            // }
+        } else if (emp.lunchEndTime === null){
+            let timeToEndLunch = addTime(emp.lunchStartTime, 30);
+            let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
+            if(minsBeforeOrAfterLunchEndTime < 0){
+                let barWidth = minsBeforeOrAfterLunchEndTime >= -30 ? getPercentage(minsBeforeOrAfterLunchEndTime + 30,30) : 0
+                return ["white", "salmon", barWidth];
+            } else{
+                return ["dark-red", "none", 0];
+            }
+        }
     } else if(typeOfBreak === "break2"){
         //have section grayed out if 1. Is 6 hour day and break1 times not done or 2. Is more than 6 hour day and lunch times not done
         if(emp.hoursDaySeg === 6 && (emp.break1StartTime === null || emp.break1EndTime === null)) return ["light-grey", "none", 0];
-        
         if(emp.hoursDaySeg > 6 && (emp.lunchStartTime === null || emp.lunchEndTime === null)) return ["light-grey", "none", 0]
         
         if(emp.break2StartTime === null){

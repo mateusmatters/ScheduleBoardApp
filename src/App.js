@@ -107,9 +107,9 @@ function App() {
             <div>$/LHR Schd</div>
           </div>
         </div> 
-        <h2>{time.getHours()}:{time.getMinutes()}</h2>
-        <div>
-          <label>Update Speed: {intervalSpeed} ms</label>
+        <div className = "inline">
+          <h2>{time.getHours()}:{time.getMinutes()}</h2>
+          <label>One minute in app is equal to: {intervalSpeed} ms</label>
           <input
             type="range"
             min={minSliderValue}
