@@ -70,85 +70,93 @@ export function simplifiedTimeStampString(timeStamp){
     return `${hoursStr}:${minutesStr}`;
 }
 
+function getPercentage(numerator, denominator){
+ return Math.round((numerator/denominator) *100)
+}
+
+
 //[backgroundColor, progressBarColor, width percentage] 
-// chooseRightProgressBarColor
 export function chooseRightColor(emp, typeOfBreak, time){
     if(!emp.isClockedIn) return ["grey", "none", 0];
     if(typeOfBreak === "break1"){
         if(emp.break1StartTime === null){
             let earliestTimeToStartBreak = addTime(emp.segmentStart, 120);
             let minsBeforeOrAfterEarliestTime = compareTimeStamps(time, earliestTimeToStartBreak);
-            if(minsBeforeOrAfterEarliestTime<0){//show a green bar if you are waiting to be in alloted time for a break
-                return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestTime)/120) *100)];
-            } else if(minsBeforeOrAfterEarliestTime>=0 && minsBeforeOrAfterEarliestTime < 120){//show red bar if you are currently in alloted time for a break
-                return ["green","red", Math.round((minsBeforeOrAfterEarliestTime/120) * 100)]
-            } else{
-                return ["dark-red", "none", 0]
-            }
+            //show a green bar with white background if not yet time for proper break
+            if(minsBeforeOrAfterEarliestTime<0) return ["white", "green", getPercentage(120+minsBeforeOrAfterEarliestTime, 120)];
+            //show red bar with green background if currently in time for proper break
+            else if(minsBeforeOrAfterEarliestTime>=0 && minsBeforeOrAfterEarliestTime < 120) return ["green","red", getPercentage(minsBeforeOrAfterEarliestTime, 120)]
+            //show no bar and dark-red background if time for proper break has past
+            else return ["dark-red", "none", 0]
         } else if(emp.break1EndTime === null){
             let timeToEndBreak1 = addTime(emp.break1StartTime, 15);
             let minsBeforeOrAfterBreak1EndTime = compareTimeStamps(time, timeToEndBreak1);
             if(minsBeforeOrAfterBreak1EndTime < 0){
-                let barWidth = minsBeforeOrAfterBreak1EndTime >= -15 ? Math.round(((15+minsBeforeOrAfterBreak1EndTime)/15)* 100) : 0
+                let barWidth = minsBeforeOrAfterBreak1EndTime >= -15 ? getPercentage(minsBeforeOrAfterBreak1EndTime + 15,15) : 0
                 return ["white", "salmon", barWidth];
             } else{
                 return ["dark-red", "none", 0];
             }
         }
     } else if(typeOfBreak === "lunch"){
-        if(emp.break1StartTime === null || emp.break1EndTime === null){
-            return ["light-grey", "none", 0]
-        } else if(emp.lunchStartTime === null){
-            let earliestTimeToStartLunch = addTime(emp.segmentStart, 240);
-            let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
-            if(minsBeforeOrAfterEarliestLunchTime<0){
-                return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
-            } else if(minsBeforeOrAfterEarliestLunchTime>=0 && minsBeforeOrAfterEarliestLunchTime < 120){
-                return ["green","red", Math.round((minsBeforeOrAfterEarliestLunchTime/120) * 100)]
-            } else{
-                return ["dark-red", "none", 0]
-            }
+        // if(emp.break1StartTime === null || emp.break1EndTime === null){
+        //     return ["light-grey", "none", 0]
+        // } else if(emp.lunchStartTime === null){
+        //     let earliestTimeToStartLunch = addTime(emp.segmentStart, 240);
+        //     let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
+        //     if(minsBeforeOrAfterEarliestLunchTime<0){
+        //         return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
+        //     } else if(minsBeforeOrAfterEarliestLunchTime>=0 && minsBeforeOrAfterEarliestLunchTime < 120){
+        //         return ["green","red", Math.round((minsBeforeOrAfterEarliestLunchTime/120) * 100)]
+        //     } else{
+        //         return ["dark-red", "none", 0]
+        //     }
 
-        } else if (emp.lunchEndTime === null){
-            let timeToEndLunch = addTime(emp.break1StartTime, 30);
-            let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
-            if(minsBeforeOrAfterLunchEndTime < 0){
-                let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
-                return ["white", "salmon", a];
-            } else{
-                return ["dark-red", "none", 0];
-            }
-        }
+        // } else if (emp.lunchEndTime === null){
+        //     let timeToEndLunch = addTime(emp.break1StartTime, 30);
+        //     let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
+        //     if(minsBeforeOrAfterLunchEndTime < 0){
+        //         let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
+        //         return ["white", "salmon", a];
+        //     } else{
+        //         return ["dark-red", "none", 0];
+        //     }
+        // }
     } else if(typeOfBreak === "break2"){
-        //need to show progress bar in 2 diff cases
-        //1 if break1 start and end time finish and emp.hoursDaySeg === 6
-        //2 if lunch1 start and end time finish and emp.hoursDaySeg > 6
-        //otherwise should be grayed out and wait for one of these 2 prior breaks to finish
-        if((emp.hoursDaySeg === 6 && (emp.break1StartTime === null || emp.break1EndTime === null))){
-            return ["light-grey", "none", 0]
-        }
+        //have section grayed out if 1. Is 6 hour day and break1 times not done or 2. Is more than 6 hour day and lunch times not done
+        if(emp.hoursDaySeg === 6 && (emp.break1StartTime === null || emp.break1EndTime === null)) return ["light-grey", "none", 0];
+        
+        if(emp.hoursDaySeg > 6 && (emp.lunchStartTime === null || emp.lunchEndTime === null)) return ["light-grey", "none", 0]
+        
         if(emp.break2StartTime === null){
             let lastBreakEndTime = emp.hoursDaySeg === 6 ? emp.break1EndTime : emp.lunchEndTime;
             let latestTimeToStartBreak2 = addTime(emp.segmentEnd, -15);
-            let timeInBetween = Math.abs(compareTimeStamps(lastBreakEndTime, latestTimeToStartBreak2));
+            let timeBetweenLastBreakEndAndLatestBreak2Start = Math.abs(compareTimeStamps(lastBreakEndTime, latestTimeToStartBreak2));
+            let firstBreakOnTime = false;
 
-            let minsBeforeOrAfterLatestTimeToStartBreak2 = compareTimeStamps(time, latestTimeToStartBreak2);
-            if(minsBeforeOrAfterLatestTimeToStartBreak2<0){
-                return ["green", "red", Math.round(((timeInBetween + minsBeforeOrAfterLatestTimeToStartBreak2)/timeInBetween) *100)];
-            } else{
-                return ["dark-red", "none", 0]
+            if(timeBetweenLastBreakEndAndLatestBreak2Start >=75){//75 is arbitrary num. want some number over 60. want to show that the proper break is after 60 min work
+                let minsSinceLastBreak = compareTimeStamps(time, lastBreakEndTime)
+                if(minsSinceLastBreak<60) return ["white", "green", getPercentage(minsSinceLastBreak, 60)];
+                firstBreakOnTime = true;
             }
+            let earliestBreak2Start = firstBreakOnTime ? addTime(lastBreakEndTime, 60): lastBreakEndTime;
+            let timeBetweenEarliestBreak2StartAndLatestBreak2Start = compareTimeStamps(earliestBreak2Start, latestTimeToStartBreak2);
+            let minsSinceEarliestBreak2Start = compareTimeStamps(time, earliestBreak2Start);
+            console.log(`${timeBetweenEarliestBreak2StartAndLatestBreak2Start} mins in between`);
+            if(timeBetweenEarliestBreak2StartAndLatestBreak2Start <0 && compareTimeStamps(time, latestTimeToStartBreak2) <0){
+                return ["green", "red", getPercentage(minsSinceEarliestBreak2Start,Math.abs(timeBetweenEarliestBreak2StartAndLatestBreak2Start))];
+            } 
+            return ["dark-red", "none", 0];
         } else if (emp.break2EndTime === null){
-            let timeToEndLunch = addTime(emp.break1StartTime, 30);
-            let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);
-            if(minsBeforeOrAfterLunchEndTime < 0){
-                let a = Math.round(((30+minsBeforeOrAfterLunchEndTime)/30)* 100)
-                return ["white", "salmon", a];
+            let timeToEndBreak2 = addTime(emp.break2StartTime, 15);
+            let minsBeforeOrAfterBreak2EndTime = compareTimeStamps(time, timeToEndBreak2);
+            if(minsBeforeOrAfterBreak2EndTime < 0){
+                let barWidth = minsBeforeOrAfterBreak2EndTime >= -15 ? getPercentage(minsBeforeOrAfterBreak2EndTime + 15,15) : 0;
+                return ["white", "salmon", barWidth];
             } else{
                 return ["dark-red", "none", 0];
             }
         }
-        
     }
     return ["light-grey", "none", 0]
 }

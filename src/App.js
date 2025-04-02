@@ -23,12 +23,18 @@ function tempToString(arr){
 
 function App() {
   const {time} = useContext(TimeContext);
+  const {intervalSpeed, setIntervalSpeed} = useContext(TimeContext);
   const [employees, setEmployees] = useState(employeeArray);
   const [employeesByDept, setEmployeesByDept] = useState(employees._array);
   const [employeesRendered, setEmployeesRendered] = useState(employeesByDept);
   const [showAddScreen, setShowAddScreen] = useState(false);
   const [showNoEmployeesText, setShowNoEmployeesText] = useState(false);
   const [lastSearchTerm, setLastSearchTerm] = useState(""); // Store last input
+  const minSliderValue = 1;  // Slowest (corresponds to highest ms)
+  const maxSliderValue = 50; // Fastest (corresponds to lowest ms)
+  const minIntervalMs = 6000; // Slowest update (6 seconds)
+  const maxIntervalMs = 100;  // Fastest update (0.1 seconds)
+
 
 
   useEffect(()=>{
@@ -63,6 +69,15 @@ function App() {
     }
   }
 
+  const sliderChange = (e) => {
+    const sliderValue = Number(e.target.value);
+  
+    // Reverse map slider range to interval speed
+    const newInterval = minIntervalMs - ((sliderValue - minSliderValue) / (maxSliderValue - minSliderValue)) * (minIntervalMs - maxIntervalMs);
+  
+    setIntervalSpeed(Math.round(newInterval)); // Ensure integer value
+  };
+
   function handleEmployeeSubmit(firstName, lastName, segStart, segEnd){
     let [hours, mins] = parseTimeString(segStart);
     let [hours2, mins2] = parseTimeString(segEnd);
@@ -93,6 +108,17 @@ function App() {
           </div>
         </div> 
         <h2>{time.getHours()}:{time.getMinutes()}</h2>
+        <div>
+          <label>Update Speed: {intervalSpeed} ms</label>
+          <input
+            type="range"
+            min={minSliderValue}
+            max={maxSliderValue}
+            step="1"
+            value={(maxSliderValue - minSliderValue) * (1 - (intervalSpeed - maxIntervalMs) / (minIntervalMs - maxIntervalMs)) + minSliderValue}
+            onChange={sliderChange}
+          />
+        </div>
         <input onChange={searchBarChangeFunction} className="search-bar" type="search" placeholder="Search For Name"></input>
         {showNoEmployeesText?<div className="error-text">no employees with this name </div>:<></>}
         <DepartmentMenu setEmployeesByDept={setEmployeesByDept} employees={employees}/>

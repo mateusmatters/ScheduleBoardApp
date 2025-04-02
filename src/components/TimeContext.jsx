@@ -28,6 +28,8 @@ export const TimeProvider = ({ children }) => {
     return date;
   })
 
+  const [intervalSpeed, setIntervalSpeed] = useState(1000);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((prevTime) =>{
@@ -35,15 +37,15 @@ export const TimeProvider = ({ children }) => {
         newTime.setMinutes(newTime.getMinutes()+1);
         return newTime;
       })
-    }, 1500);
+    }, intervalSpeed);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [intervalSpeed]);
 
 
   //this uses the context we created above and is allowing any children inside to access the time value we made
   return (
-    <TimeContext.Provider value={{time}}>
+    <TimeContext.Provider value={{time, intervalSpeed, setIntervalSpeed}}>
       {children}
     </TimeContext.Provider>
   );

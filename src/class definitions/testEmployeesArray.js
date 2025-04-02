@@ -109,8 +109,8 @@ const employeeArray = new SortedArray(Employee);
 // employeeArray.add(new Employee("CHARLES", "HALL", createTimeStamp(13,45), createTimeStamp(18,45), "Pharmacist", "PHARMACY"));
 employeeArray.add(new Employee("KAREN", "ALLEN", createTimeStamp(7,0), createTimeStamp(13,0), "Pharmacist", "PHARMACY"));
 
-employeeArray.add(new Employee("DANIEL", "YOUNG", createTimeStamp(8,30), createTimeStamp(9,30), "Baker", "BAKERY")); //WEIRD SEG
-employeeArray.add(new Employee("NANCY", "KING", createTimeStamp(9,30), createTimeStamp(18,0), "Baker", "BAKERY"));
+// employeeArray.add(new Employee("DANIEL", "YOUNG", createTimeStamp(8,30), createTimeStamp(9,30), "Baker", "BAKERY")); //WEIRD SEG
+// employeeArray.add(new Employee("NANCY", "KING", createTimeStamp(9,30), createTimeStamp(18,0), "Baker", "BAKERY"));
 
 
 export default employeeArray;
