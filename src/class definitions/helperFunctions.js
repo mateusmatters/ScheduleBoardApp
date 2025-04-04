@@ -28,17 +28,7 @@ function addTime(time, minutes) {
  * @param {Date} earlyTimeStamp - Earlier time value
  * @param {Date} laterTimeStamp - Later time value
  */
-export function getDifferenceTimeStamps(earlyTimeStamp, laterTimeStamp){
-    let differenceHours = laterTimeStamp.getHours() - earlyTimeStamp.getHours();
-    let differenceMinutes = laterTimeStamp.getMinutes() - earlyTimeStamp.getMinutes();
-    if(differenceMinutes < 0){
-        differenceHours = differenceHours -1;
-        differenceMinutes = 60 + differenceMinutes;
-    }
-    let differenceCombined = differenceHours + (differenceMinutes/60)
-    let roundUpTwoDecimals = Math.ceil(differenceCombined * 100) / 100;
-    return roundUpTwoDecimals;
-}
+
 
 
 //takes in integer value that represents an integer of number of seconds
@@ -102,16 +92,44 @@ export function chooseRightColor(emp, typeOfBreak, time){
         if(emp.hoursDaySeg > 6 && (emp.break1StartTime === null || emp.break1EndTime === null)) return ["light-grey", "none", 0]
 
         if(emp.lunchStartTime === null){
+            let preferedEarliestLunchStart = addTime(emp.segmentStart, 180);
+            let preferedLatestLunchStart = addTime(emp.segmentStart, 300);
+            let mandatoryNoBreakTime= addTime(emp.break1EndTime, 60 )//the first 60 mins after a break is given, want to be mandatory waiting time (white, green)
+
+
+            if(compareTimeStamps(mandatoryNoBreakTime,preferedEarliestLunchStart) <=0){
+                if(compareTimeStamps(time, preferedEarliestLunchStart) < 0){
+                    let range = compareTimeStamps(preferedEarliestLunchStart, emp.break1EndTime);
+                    let numerator = compareTimeStamps(time, emp.break1EndTime);
+                    return ["white", "green", getPercentage(numerator,range)]
+                } else if(compareTimeStamps(time, preferedLatestLunchStart) < 0) {
+                    let range = compareTimeStamps(preferedLatestLunchStart, preferedEarliestLunchStart);
+                    let numerator = compareTimeStamps(time, preferedEarliestLunchStart);
+                    return ["green", "red", getPercentage(numerator,range)];
+                } else{
+                    return ["dark-red", "none", 0]
+                }
+            } else if(compareTimeStamps(mandatoryNoBreakTime, preferedLatestLunchStart) <= -75){//this range has to be at least 75 mins (60 mins idle and atleast 15 active) in order to show both styles
+                let activeRange = compareTimeStamps(preferedLatestLunchStart, mandatoryNoBreakTime);
+                if(compareTimeStamps(time, emp.break1EndTime) < 60){
+                    let range = 60;
+                    let numerator = compareTimeStamps(time, emp.break1EndTime);
+                    return ["white", "green", getPercentage(numerator,range)]
+                } else if(compareTimeStamps(time, preferedLatestLunchStart) < 0){
+                    let range = compareTimeStamps(preferedLatestLunchStart, mandatoryNoBreakTime);
+                    let numerator = compareTimeStamps(time, mandatoryNoBreakTime);
+                    return ["green", "red", getPercentage(numerator,range)];
+                } else{
+                    return ["dark-red", "none", 0]
+                }
+            }
+            if(compareTimeStamps(mandatoryNoBreakTime, preferedLatestLunchStart) < 0){
+                let range = compareTimeStamps(preferedLatestLunchStart, mandatoryNoBreakTime);
+                let numerator = compareTimeStamps(time, mandatoryNoBreakTime);
+                return ["green", "red", getPercentage(numerator,range)];
+            }
             return ["dark-red", "none", 0]
-            // let earliestTimeToStartLunch = addTime(emp.segmentStart, 240);
-            // let minsBeforeOrAfterEarliestLunchTime = compareTimeStamps(time, earliestTimeToStartLunch);
-            // if(minsBeforeOrAfterEarliestLunchTime<0){
-            //     return ["white", "green", Math.round(((120 + minsBeforeOrAfterEarliestLunchTime)/120) *100)];
-            // } else if(minsBeforeOrAfterEarliestLunchTime>=0 && minsBeforeOrAfterEarliestLunchTime < 120){
-            //     return ["green","red", Math.round((minsBeforeOrAfterEarliestLunchTime/120) * 100)]
-            // } else{
-            //     return ["dark-red", "none", 0]
-            // }
+
         } else if (emp.lunchEndTime === null){
             let timeToEndLunch = addTime(emp.lunchStartTime, 30);
             let minsBeforeOrAfterLunchEndTime = compareTimeStamps(time, timeToEndLunch);

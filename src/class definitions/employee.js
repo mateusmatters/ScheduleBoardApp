@@ -1,4 +1,4 @@
-import { compareTimeStamps, getDifferenceTimeStamps, simplifiedTimeStampString} from "./helperFunctions.js";
+import { compareTimeStamps, simplifiedTimeStampString} from "./helperFunctions.js";
 
 const START_TIME = 0;
 const END_TIME = 1;
@@ -17,6 +17,18 @@ const END_TIME = 1;
 // duties STRING
 
 
+export function correctHoursDaySeg(earlyTimeStamp, laterTimeStamp){
+    let differenceHours = laterTimeStamp.getHours() - earlyTimeStamp.getHours();
+    let differenceMinutes = laterTimeStamp.getMinutes() - earlyTimeStamp.getMinutes();
+    if(differenceMinutes < 0){
+        differenceHours = differenceHours -1;
+        differenceMinutes = 60 + differenceMinutes;
+    }
+    let differenceCombined = differenceHours + (differenceMinutes/60)
+    let roundUpTwoDecimals = Math.ceil(differenceCombined * 100) / 100;
+    //returns the difference if normal, the difference - .5 hours if over 6 hours diff (mandatory lunch time needed)
+    return roundUpTwoDecimals >6 ? roundUpTwoDecimals - 0.5: roundUpTwoDecimals;
+}
 
 export class Employee {
     constructor(firstName, lastName, segmentStart, segmentEnd, role, department ="No Department") {
@@ -30,44 +42,26 @@ export class Employee {
       this.break1 = [null, null];
       this.lunch = [null, null];
       this.break2 = [null, null]
-      this.hoursDaySeg = getDifferenceTimeStamps(segmentStart, segmentEnd);
+      this.hoursDaySeg = correctHoursDaySeg(segmentStart, segmentEnd);
       this.role = role;
       this.department = department;
       this.isClockedIn= false;
     }
 
-    get fullName(){
-        return `${this.lastName}, ${this.firstName}`
-    }
+    get fullName(){return `${this.lastName}, ${this.firstName}`}
 
-    get break1StartTime(){
-        return this.break1[START_TIME];
-    }
-    get break1EndTime(){
-        return this.break1[END_TIME];
-    }
+    get break1StartTime(){return this.break1[START_TIME];}
+    get break1EndTime(){return this.break1[END_TIME];}
 
-    get break2StartTime(){
-        return this.break2[START_TIME];
-    }
-    get break2EndTime(){
-        return this.break2[END_TIME];
-    }
+    get break2StartTime(){return this.break2[START_TIME];}
+    get break2EndTime(){return this.break2[END_TIME];}
     
-    get lunchStartTime(){
-        return this.lunch[START_TIME];
-    }
-    get lunchEndTime(){
-        return this.lunch[END_TIME];
-    }
+    get lunchStartTime(){return this.lunch[START_TIME];}
+    get lunchEndTime(){return this.lunch[END_TIME];}
 
-    get segStartString(){
-        return simplifiedTimeStampString(this.segmentStart);
-    }
+    get segStartString(){return simplifiedTimeStampString(this.segmentStart);}
 
-    get segEndString(){
-        return simplifiedTimeStampString(this.segmentEnd);
-    }
+    get segEndString(){return simplifiedTimeStampString(this.segmentEnd);}
     get hoursDaySegString(){
         let temp = String(this.hoursDaySeg);
         if(temp.length ==1){
