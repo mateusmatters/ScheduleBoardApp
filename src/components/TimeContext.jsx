@@ -24,7 +24,7 @@ export const TimeProvider = ({ children }) => {
   //TEST VERSION
   const [time, setTime] = useState(()=>{
     const date = new Date();
-    date.setHours(12,30,0,0);
+    date.setHours(7,0,0,0);
     return date;
   })
 
