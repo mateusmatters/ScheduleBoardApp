@@ -1,4 +1,4 @@
-body{
+html{
   font-size: 14px;
 }
 
@@ -10,7 +10,7 @@ input[type="time"] {
 .top-page{
   display: flex;
   justify-content: space-around;
-  font-size: 20px;
+  font-size: 20px; 
 }
 
 .timeInputsInGridLeft{
