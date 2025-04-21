@@ -63,7 +63,7 @@ const EmployeeComponent = ({employee, index, employees, setEmployees, time}) => 
           <div className= "grid-element fullName">
             {employee.fullName} 
             <label className="checkbox-container">
-              <input type="checkbox" id="customCheckbox" onClick={()=>{modifyClockedInStatus(employees.array[Number(index)])}}/>
+              {employee.isClockedIn ? <input type="checkbox" id="customCheckbox" defaultChecked onClick={()=>{modifyClockedInStatus(employees.array[Number(index)])}}/>: <input type="checkbox" id="customCheckbox" onClick={()=>{modifyClockedInStatus(employees.array[Number(index)])}}/>}
             </label>
           </div>
           <div className= "grid-element hrsDaySeg">{employee.hoursDaySegString} / {employee.hoursDaySegString}</div>

@@ -1,11 +1,17 @@
-html{
-  font-size: 14px;
-}
+/* The different colors we will use throughout the app */
+.green{background-color: rgb(144, 238, 144)}/*break good to go*/
+.red{background-color: rgb(198, 58, 58)}/*break is ugent and should happen soon*/
+.dark-red{background-color: rgb(121, 32, 32)}/*break is overdue*/
+.blue{background-color: rgb(152, 184, 215)}/*break has been completed*/
+.light-grey{background-color: rgb(193, 193, 193)}/*must give other type of break first*/
+.grey{background-color: grey}
+.white{background-color: white}
+.salmon{background-color: salmon}
 
-input[type="time"] {
-  font-size: 13px;
-  color: black;
-}
+/* GENERAL STYLING */
+html{font-size: 13px}
+
+.inline{display: inline}
 
 .top-page{
   display: flex;
@@ -13,6 +19,27 @@ input[type="time"] {
   font-size: 20px; 
 }
 
+/* STRUCTURES ONLY THE EMPLOYEE GRID */
+.grid{
+  display: grid;
+  grid-template-rows: 40px;
+  grid-template-columns: 1245px;
+  grid-auto-rows: 40px;
+}
+
+.row-elt{
+  display:grid;
+  grid-template-columns:100px 80px 160px 85px 70px 220px 220px 220px 70px 70px 100px;
+}
+
+.grid-element{
+  border: 1px solid #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* STYLING FOR THE GRID ELEMENTS THAT CONTAIN TIME INPUTS */
 .timeInputsInGridLeft{
   margin-right: 5px;
 }
@@ -21,59 +48,7 @@ input[type="time"] {
   margin-left: 5px;
 }
 
-.grid{
-  display: grid;
-  grid-template-rows: 40px;
-  /* grid-template-columns: 70px 80px 110px 85px 78px 230px 230px 230px 78px 70px 100px; */
-  grid-template-columns: 1245px;
-  grid-auto-rows: 40px;
-}
-
-.row-elt{
-  display:grid;
-  grid-template-columns:100px 80px 160px 85px 70px 220px 220px 220px 70px 70px 100px;
-  grid-template-rows:40px;
-}
-
-.grid-element{
-  border: 2px solid #111;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.column-headings{
-  background-color: lightgray;
-}
-
-
-.green{/*GREEN: rgb(144, 238, 144); break good to go*/
-  background-color: rgb(144, 238, 144);
-}
-
-.red{/*RED: rgb(198, 58, 58); break is ugent and should happen soon*/
-  background-color: rgb(198, 58, 58);
-}
-.dark-red{
-  background-color: rgb(121, 32, 32);
-}
-
-.blue{/*BLUE: rgb(152, 184, 215); break has been completed*/
-  background-color: rgb(152, 184, 215);
-}
-
-.light-grey{/*LIGHT GREY: rgb(193, 193, 193); must give other type of break first*/
-  background-color: rgb(193, 193, 193);
-}
-.grey{
-  background-color: grey;
-}
-.white{
-  background-color: white;
-}
-.salmon{
-  background-color: salmon;
-}
+.centered-time-content{z-index: 1} /*When progress bar overflows, time elements and dash will stay ontop*/
 
 .progress-bar{
   position: absolute;
@@ -87,64 +62,31 @@ input[type="time"] {
   position: relative;
 }
 
-.centered-time-content{
-  z-index: 2;
-}
+
 
 .checkbox-container {
   cursor: pointer;
 }
 
-.checkbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #333;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 8px;
-}
 
-.checkbox input {
-  display: none;
-}
 
-.checkbox::after {
-  content: "";
-  font-size: 16px;
-  display: none;
-}
 
-.checkbox input:checked + .checkbox::after {
-  content: "✔";
-  display: block;
-  color: #333;
-}
-
+/* All THE STYLING FOR THE DEPARTMENT MENU COMPONENT */
 .department-nav-bar {
   display: flex;
-  justify-content: space-between; /* Ensures even spacing */
-  width: 50vw; /* Takes full screen width */
+  justify-content: space-between;
+  width: 50vw;
   list-style: none;
   font-size: 18px;
   padding: 0;
   margin: 0;
 }
 
-.department-spectacle {
-  background-color: rgb(175, 145, 91);
-  border: 2px solid #111;
-  min-width: 100px; /* Ensures it does not shrink below 100px */
-  flex-grow: 1; /* Allows it to grow */
-  text-align: center; /* Centers text */
-  padding: 10px;
-}
-
 .department-element {
   background-color: rgb(228, 198, 142);
   border: 2px solid #111;
   max-width:200px;
-  flex-grow: 1; /* Distributes available space evenly */
+  flex-grow: 1;
   text-align: center;
   padding: 10px;
 }
@@ -153,29 +95,15 @@ input[type="time"] {
   background-color: rgb(233, 211, 172);
 }
 
-.department-element.abc {
+.department-element.selected {
   background-color: rgb(190, 54, 118);
 }
-
-/* .highlighted {
-    animation: highlight-effect .8s infinite alternate ease-in-out;
+.department-element.label {
+  background-color: rgb(175, 145, 91);
 }
-
-@keyframes highlight-effect {
-    0% { background-color: transparent; }
-    100% { background-color: red; }
-} */
 
 .search-bar{
   width: 300px;
   margin-bottom: 30px;
   border-radius: 25px;
-}
-
-.error-text {
-  color: red;
-}
-
-.inline{
-  display: inline;
 }

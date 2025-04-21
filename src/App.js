@@ -24,9 +24,6 @@ function tempToString(arr){
 function App() {
   const {time} = useContext(TimeContext);
   const {intervalSpeed, setIntervalSpeed} = useContext(TimeContext);
-  const [employees, setEmployees] = useState(employeeArray);
-  const [employeesByDept, setEmployeesByDept] = useState(employees._array);
-  const [employeesRendered, setEmployeesRendered] = useState(employeesByDept);
   const [showAddScreen, setShowAddScreen] = useState(false);
   const [showNoEmployeesText, setShowNoEmployeesText] = useState(false);
   const [lastSearchTerm, setLastSearchTerm] = useState(""); // Store last input
@@ -34,6 +31,11 @@ function App() {
   const maxSliderValue = 50; // Fastest (corresponds to lowest ms)
   const minIntervalMs = 6000; // Slowest update (6 seconds)
   const maxIntervalMs = 100;  // Fastest update (0.1 seconds)
+
+
+  const [employees, setEmployees] = useState(employeeArray);
+  const [employeesByDept, setEmployeesByDept] = useState(employees._array);
+  const [employeesRendered, setEmployeesRendered] = useState(employeesByDept);
 
 
 
@@ -71,10 +73,7 @@ function App() {
 
   const sliderChange = (e) => {
     const sliderValue = Number(e.target.value);
-  
-    // Reverse map slider range to interval speed
     const newInterval = minIntervalMs - ((sliderValue - minSliderValue) / (maxSliderValue - minSliderValue)) * (minIntervalMs - maxIntervalMs);
-  
     setIntervalSpeed(Math.round(newInterval)); // Ensure integer value
   };
 
@@ -91,7 +90,7 @@ function App() {
       <div className="App">
         <div className="top-page">
           <div>
-            <div>store <span className="highlighted">name:</span> 0213-Gaithersburg</div>
+            <div>store <span className="highlighted">name:</span> 0999-DREAMTOWN</div>
           </div>
           <div>
             <div>date: </div>
@@ -120,21 +119,21 @@ function App() {
           />
         </div>
         <input onChange={searchBarChangeFunction} className="search-bar" type="search" placeholder="Search For Name"></input>
-        {showNoEmployeesText?<div className="error-text">no employees with this name </div>:<></>}
+        {showNoEmployeesText?<div className="red">no employees with this name </div>:<></>}
         <DepartmentMenu setEmployeesByDept={setEmployeesByDept} employees={employees}/>
         <div className="grid">
           <div className="row-elt">
-            <div className= "column-headings grid-element"><b>TM/Reg</b></div>
-            <div className= "column-headings grid-element"><b>Job</b></div>
-            <div className= "column-headings grid-element"><b>Name</b></div>
-            <div className= "column-headings grid-element"><b>Hrs Day/Seg</b></div>
-            <div className= "column-headings grid-element"><b>Seg. Start</b></div>
-            <div className= "column-headings grid-element"><b>Break1</b></div>
-            <div className= "column-headings grid-element"><b>Lunch</b></div>
-            <div className= "column-headings grid-element"><b>Break2</b></div>
-            <div className= "column-headings grid-element"><b>Seg. End</b></div>
-            <div className= "column-headings grid-element"><b>Waiver</b></div>
-            <div className= "column-headings grid-element"><b>Duties</b></div>
+            <div className= "light-grey grid-element"><b>TM/Reg</b></div>
+            <div className= "light-grey grid-element"><b>Job</b></div>
+            <div className= "light-grey grid-element"><b>Name</b></div>
+            <div className= "light-grey grid-element"><b>Hrs Day/Seg</b></div>
+            <div className= "light-grey grid-element"><b>Seg. Start</b></div>
+            <div className= "light-grey grid-element"><b>Break1</b></div>
+            <div className= "light-grey grid-element"><b>Lunch</b></div>
+            <div className= "light-grey grid-element"><b>Break2</b></div>
+            <div className= "light-grey grid-element"><b>Seg. End</b></div>
+            <div className= "light-grey grid-element"><b>Waiver</b></div>
+            <div className= "light-grey grid-element"><b>Duties</b></div>
           </div>
           {employeesRendered.map((employee, index) => (
             <EmployeeComponent employee={employee} index ={index} employees={employees} setEmployees={setEmployees} time={time}/>

@@ -110,7 +110,5 @@ export class Employee {
         }
         `;
     }
-    toStringSimplified() {
-        return `{Name: ${this.firstName} ${this.lastName}}`;
-      }
+    toStringSimplified() {return `{Name: ${this.firstName} ${this.lastName}}`}
 }

@@ -9,14 +9,14 @@ const DepartmentMenu = ({setEmployeesByDept, employees}) => {
   const allRef = useRef(null);
 
   const departments = ["ADMINISTRATION", "BAKERY", "SERVICE-DELI","FOOD-COURT",
-     "FRONT-END", "TIRE", "HEARING-AID", "LOT-CREW", "MEAT", "MEMBERSHIP",
-     "MEMBER-SERVICE", "MERCHANDISING", "OPTICAL", "PHARMACY", "RTV"];
+     "FRONT-END", "TIRE", "HEARING-AID", "LOT-CREW", "MAINTENANCE", "MEAT", "MEMBERSHIP",
+     "MEMBER-SERVICE", "MERCHANDISING", "PHARMACY", "RTV"];
 
   function clickFunction(e, department){
     if(prevEvent.current !== null){
-      prevEvent.current.target.classList.remove("abc");
+      prevEvent.current.target.classList.remove("selected");
     }
-    e.target.classList.add("abc");
+    e.target.classList.add("selected");
     prevEvent.current = e;
     setEmployeesByDept(employees.getSpecificDepartment(department));
   }
@@ -29,7 +29,7 @@ const DepartmentMenu = ({setEmployeesByDept, employees}) => {
 
   return (
     <ul className="department-nav-bar">
-        <li className="department-spectacle">Departments</li>
+        <li className="department-element label">Departments</li>
         <li ref={allRef} key="ALL" onClick={(e) => clickFunction(e, "ALL")} className="department-element"> ALL</li>
         {departments.map((department)=>(
           <li key={department} onClick={(e) => clickFunction(e, department)} className="department-element"> {department}</li>
