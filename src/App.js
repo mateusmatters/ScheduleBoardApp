@@ -11,37 +11,36 @@ import TimeContext from "./components/TimeContext"
 import DepartmentMenu from './components/DepartmentMenu';
 import EmployeeComponent from './components/EmployeeComponent'
 
-function tempToString(arr){
-  let retString ="{";
-  for (let element of arr){
-    retString = retString + element.toStringSimplified()+", "
-  }
-  if( retString.length == 1) return "{}";
-  return retString.slice(0, retString.length-2) + "}";
-}
-
 
 function App() {
   const {time} = useContext(TimeContext);
   const {intervalSpeed, setIntervalSpeed} = useContext(TimeContext);
   const [showAddScreen, setShowAddScreen] = useState(false);
   const [showNoEmployeesText, setShowNoEmployeesText] = useState(false);
+
   const [lastSearchTerm, setLastSearchTerm] = useState(""); // Store last input
+  const [currentDepartmentVal, setCurrentDepartmentVal] = useState('ALL');
+
   const minSliderValue = 1;  // Slowest (corresponds to highest ms)
   const maxSliderValue = 50; // Fastest (corresponds to lowest ms)
   const minIntervalMs = 6000; // Slowest update (6 seconds)
   const maxIntervalMs = 100;  // Fastest update (0.1 seconds)
 
-
   const [employees, setEmployees] = useState(employeeArray);
-  const [employeesByDept, setEmployeesByDept] = useState(employees._array);
-  const [employeesRendered, setEmployeesRendered] = useState(employeesByDept);
+  const [employeesRendered, setEmployeesRendered] = useState(employees._array);
 
-
+  function getLatestEmployeesRendered(dept, searchBarInput){
+    let retVal = employees.getSpecificDepartment(dept);
+    if(searchBarInput !== undefined){
+      retVal = findSimilarNameInList(searchBarInput, retVal);
+    }
+    setEmployeesRendered(retVal);
+    return retVal;
+  }
 
   useEffect(()=>{
-    searchBarChangeFunction(lastSearchTerm);
-  }, [employeesByDept])
+    getLatestEmployeesRendered(currentDepartmentVal, lastSearchTerm);
+  }, [currentDepartmentVal, lastSearchTerm, employees])
 
   function searchBarChangeFunction(eOrValue) {
     let searchQuery = "";
@@ -53,20 +52,15 @@ function App() {
     }
   
     setLastSearchTerm(searchQuery); // Save last search term
-  
-    let a = null;
     try {
-      a = findSimilarNameInList(searchQuery, employeesByDept);
+      let a = getLatestEmployeesRendered(null, searchQuery)
       if (a.length === 0) {
         setShowNoEmployeesText(true);
       } else {
         setShowNoEmployeesText(false);
-        setEmployeesRendered(a);
       }
-      console.log(`what names in subPart are similar to ${searchQuery}: ${tempToString(a)}`);
     } catch (err) {
       console.log(err);
-      setEmployeesRendered(employeesByDept);
       setShowNoEmployeesText(false);
     }
   }
@@ -77,10 +71,11 @@ function App() {
     setIntervalSpeed(Math.round(newInterval)); // Ensure integer value
   };
 
-  function handleEmployeeSubmit(firstName, lastName, segStart, segEnd){
+  function addEmployee(firstName, lastName, segStart, segEnd){
     let [hours, mins] = parseTimeString(segStart);
     let [hours2, mins2] = parseTimeString(segEnd);
-    const empx = new Employee(firstName, lastName, createTimeStamp(hours,mins), createTimeStamp(hours2,mins2), 5, "Developer");
+    // const empx = new Employee(firstName, lastName, createTimeStamp(hours,mins), createTimeStamp(hours2,mins2), 5, "FRONT-END");
+    const empx = new Employee(45673646,firstName, lastName, createTimeStamp(hours,mins), createTimeStamp(hours2,mins2), "Cashier", "FRONT-END");
     const updatedEmployees = new SortedArray(Employee);
     updatedEmployees.array = [...employees.array];
     updatedEmployees.add(empx);
@@ -118,9 +113,9 @@ function App() {
             onChange={sliderChange}
           />
         </div>
-        <input onChange={searchBarChangeFunction} className="search-bar" type="search" placeholder="Search For Name"></input>
+        <input onChange = {searchBarChangeFunction} className="search-bar" type="search" placeholder="Search For Name"></input>
         {showNoEmployeesText?<div className="red">no employees with this name </div>:<></>}
-        <DepartmentMenu setEmployeesByDept={setEmployeesByDept} employees={employees}/>
+        <DepartmentMenu setCurrentDepartmentVal={setCurrentDepartmentVal}/>
         <div className="grid">
           <div className="row-elt">
             <div className= "light-grey grid-element"><b>TM/Reg</b></div>
@@ -135,12 +130,12 @@ function App() {
             <div className= "light-grey grid-element"><b>Waiver</b></div>
             <div className= "light-grey grid-element"><b>Duties</b></div>
           </div>
-          {employeesRendered.map((employee, index) => (
-            <EmployeeComponent employee={employee} index ={index} employees={employees} setEmployees={setEmployees} time={time}/>
+          {employeesRendered.map((employee) => (
+            <EmployeeComponent employee={employee} employeesRendered = {employeesRendered} employees={employees} setEmployees={setEmployees} time={time}/>
           ))}
         </div>
         <button onClick={() =>setShowAddScreen(prev => !prev)}>add row</button>
-        {showAddScreen ? <AddEmployeeTextFields onSubmit={handleEmployeeSubmit}/> : <></>}
+        {showAddScreen ? <AddEmployeeTextFields onSubmit={addEmployee}/> : <></>}
       </div>
   );
 }

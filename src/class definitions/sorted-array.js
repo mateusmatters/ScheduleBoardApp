@@ -1,6 +1,3 @@
-import { Employee} from "./employee.js";
-
-
 function areNamesSimilar(partialOrWholeName, wholeName){
   if (typeof partialOrWholeName !== 'string' || typeof wholeName !== 'string') {
     throw new Error("Both inputs must be strings");
@@ -10,9 +7,11 @@ function areNamesSimilar(partialOrWholeName, wholeName){
   return regex.test(wholeName);
 }
 
+//can return empty array, or array of names from employeeList inputted
 export function findSimilarNameInList(inputName, employeeList){
+  if(inputName.length ===0) return employeeList;
   if (!/^[A-Za-z'-]+ ?(?: [A-Za-z'-]+)?$/.test(inputName)) throw new Error("Invalid format. Expecting only one or two names. Either first, last, or both");
-  if(employeeList.length <1) throw new Error("Need at least one element in Sorted Array");
+  if(employeeList.length <1) return [];
 
   let match = inputName.match(/^([A-Za-z'-]+) ?([A-Za-z'-]+)?$/);
   let name1 = match[1]; // First name (always present)
@@ -85,28 +84,11 @@ export class SortedArray {
       return retValue;
     }
 
-    //employee specific function
-    // findSimilarNameInList(inputName){
-    //   if (!/^[A-Za-z'-]+ ?(?: [A-Za-z'-]+)?$/.test(inputName)) throw new Error("Invalid format. Expecting only one or two names. Either first, last, or both");
-    //   if(this.size <1) throw new Error("Need at least one element in Sorted Array");
-
-    //   let match = inputName.match(/^([A-Za-z'-]+) ?([A-Za-z'-]+)?$/);
-    //   let name1 = match[1]; // First name (always present)
-    //   let name2 = match[2] || null; // Second name (optional, defaults to null)
-    //   let retArray = [];
-    //   // console.log(`name1: ${name1}, name2: ${name2}`);
-    //   if (name2 === null){
-    //     for (let employee of this._array){
-    //       let hey = false;
-    //       if(areNamesSimilar(name1, employee.firstName) || areNamesSimilar(name1, employee.lastName)){
-    //         retArray.push(employee);
-    //         hey = true;
-    //       }
-    //       console.log(`Are ${name1} and ${employee.firstName} similar? Answer is : ${hey}`);
-    //     }
-    //   }
-    //   return retArray;
-    // }
+    findEmployeeById(id){
+      const employee = this._array.find(emp => emp.id === id);
+      if(!employee) {throw new Error(`Employee with ID ${id} not found`)}
+      return employee;
+    }
 
     toString() {
       let retString ="{";

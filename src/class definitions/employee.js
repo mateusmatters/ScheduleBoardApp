@@ -31,10 +31,11 @@ export function correctHoursDaySeg(earlyTimeStamp, laterTimeStamp){
 }
 
 export class Employee {
-    constructor(firstName, lastName, segmentStart, segmentEnd, role, department ="No Department") {
+    constructor(id, firstName, lastName, segmentStart, segmentEnd, role, department ="No Department") {
       if (!firstName, !lastName || !segmentStart || !segmentEnd) {
         throw new Error("name, segmentStart, and segmentEnd are required fields.");
       }
+      this.id = id;
       this.firstName = firstName;
       this.lastName = lastName;
       this.segmentStart = segmentStart;

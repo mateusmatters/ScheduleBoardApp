@@ -4,10 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 //the reason for the curly brackets is bc of object destructuring
 //the props object is destructured into many small things
 //if not destrucutred you would have to get it like this: props.setSelectedDepartment (where beginning is DepartmentMenu=(props)=> ...)
-const DepartmentMenu = ({setEmployeesByDept, employees}) => {
+const DepartmentMenu = ({setCurrentDepartmentVal}) => {
   const prevEvent = useRef(null);
   const allRef = useRef(null);
-
   const departments = ["ADMINISTRATION", "BAKERY", "SERVICE-DELI","FOOD-COURT",
      "FRONT-END", "TIRE", "HEARING-AID", "LOT-CREW", "MAINTENANCE", "MEAT", "MEMBERSHIP",
      "MEMBER-SERVICE", "MERCHANDISING", "PHARMACY", "RTV"];
@@ -18,7 +17,7 @@ const DepartmentMenu = ({setEmployeesByDept, employees}) => {
     }
     e.target.classList.add("selected");
     prevEvent.current = e;
-    setEmployeesByDept(employees.getSpecificDepartment(department));
+    setCurrentDepartmentVal(department);
   }
 
   useEffect(() => {
